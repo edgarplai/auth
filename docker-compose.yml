@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+
+  auth_db:
+    container_name: auth_db
+    image: postgres:15.1
+    restart: always
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: db_keycloak
+      POSTGRES_USER: usr_keycloak
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5434:5433
+    networks:
+      - plai
+
+  auth_keycloak:
+    container_name: auth_keycloak
+    depends_on:
+      - auth_db
+    image: plai/auth 
+    restart: always
+    volumes:
+      - src:/opt/keycloak
+      - ./realms:/opt/keycloak/data/import
+      - ./themes:/opt/keycloak/themes
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_SCHEMA: public
+      DB_DATABASE: db_keycloak
+      DB_USER: usr_keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 8081:8080
+    networks:
+      - plai
+    command:
+      - --import-realm
+
+volumes:
+  src:
+networks:
+  plai:
