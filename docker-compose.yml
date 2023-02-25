@@ -42,8 +42,11 @@ services:
       - plai
     command:
       - --import-realm
+      - --http-relative-path /auth 
 
 volumes:
   src:
 networks:
   plai:
+    external: false
+    name: plai
