@@ -13,9 +13,10 @@ services:
       POSTGRES_USER: usr_keycloak
       POSTGRES_PASSWORD: password
     ports:
-      - 5434:5433
+      - 5433:5432
     networks:
-      - plai
+      plai:
+        ipv4_address: 172.23.0.5
 
   auth_keycloak:
     container_name: auth_keycloak
@@ -37,9 +38,10 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - 8081:8080
+      - 8001:8080
     networks:
-      - plai
+      plai:
+        ipv4_address: 172.23.0.4
     command:
       - --import-realm
       - --http-relative-path /auth 
@@ -50,3 +52,6 @@ networks:
   plai:
     external: false
     name: plai
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
